@@ -13,6 +13,7 @@ if check_password():
     
     panel_global = st.sidebar.radio('Этапы расчета:', ["Руководство пользователя", "1. - Этап расчета ГТУ", "2. - Этап расчета ступеней ГТУ", "3. - Этап расчета по сечениям", "4. - Этап профилирование"])
     if panel_global == "Руководство пользователя":
+        st.session_state.number_of_steps_ = 0.0
         st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins><em>Добро пожаловать в программу по проектированию ГТУ (version - 1.0)!</em></ins></h1>", unsafe_allow_html=True)
         st.header('')
         st.header('')
@@ -365,7 +366,7 @@ if check_password():
                     Save_to_file_stage(distribution_table(st.session_state.parametergtu[3], method = 'termod'), name = 'ParameterGTU(termod)', extension ='.xlsx')
     
     if panel_global == "2. - Этап расчета ступеней ГТУ":
-        if not st.session_state.number_of_steps_:
+        if st.session_state.number_of_steps_ == 0.0:
             st.header('Необходимо выполнить: "1. - Этап расчета ГТУ"')
         else:
             stage_str = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
@@ -686,7 +687,7 @@ if check_password():
                 st.table(stageTable(st.session_state.stage_list))
 
     if panel_global == "3. - Этап расчета по сечениям":
-        if not st.session_state.number_of_steps_:
+        if st.session_state.number_of_steps_ == 0.0:
             st.header('Необходимо выполнить: "2. - Этап расчета ступеней ГТУ"')
         else:
             panel_3 = st.sidebar.radio('Этапы расчета ступени:', [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))])
