@@ -11,7 +11,7 @@ st.set_page_config(
 
 if check_password():
     
-    panel_global = st.sidebar.radio('Этапы расчета:', ["Руководство пользователя", "1. - Этап расчета ГТУ", "2. - Этап расчета ступеней ГТУ", "3. - Этап расчета по сечениям", "4. - Этап профилирование"])
+    panel_global = st.sidebar.radio('Этапы расчета:', ["Руководство пользователя", "I. - Этап расчета ГТУ", "II. - Этап расчета ступеней ГТУ", "II. - Этап расчета по сечениям", "IV. - Этап профилирование"])
     if panel_global == "Руководство пользователя":
         st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins><em>Добро пожаловать в программу по проектированию ГТУ (version - 1.0)!</em></ins></h1>", unsafe_allow_html=True)
         st.header('')
@@ -25,7 +25,7 @@ if check_password():
         st.header('')
         st.caption('Разработчик: $Андрианов$ $Дмитрий$ $Михайлович$')
 
-    if panel_global == "1. - Этап расчета ГТУ":
+    if panel_global == "I. - Этап расчета ГТУ":
 
         panel_1 = st.sidebar.radio('Этапы расчета проточной части:', ["1. - Расчет состава топлива", 
                                                         "2. - Расчет схемы ГТУ", 
@@ -38,7 +38,6 @@ if check_password():
             st.session_state.fuel = None
 
             with st.form(key ='my_form_1'):
-                st.session_state.number_of_steps_ = 0.0
                 _CO_, _H_2_, _CH_2_, = st.columns(3)
                 _H_2S_, _CO_2_, _O_2_= st.columns(3)
                 _CH_4_, _C_2H_4_, _C_2H_6_, = st.columns(3)
@@ -365,7 +364,7 @@ if check_password():
                     Save_to_file_stage(distribution_table(st.session_state.parametergtu[2], method = 'kinematics'), name = 'ParameterGTU(kinematics)', extension ='.xlsx')
                     Save_to_file_stage(distribution_table(st.session_state.parametergtu[3], method = 'termod'), name = 'ParameterGTU(termod)', extension ='.xlsx')
     
-    if panel_global == "2. - Этап расчета ступеней ГТУ":
+    if panel_global == "II. - Этап расчета ступеней ГТУ":
         if st.session_state.number_of_steps_ == 0.0:
             st.header('Необходимо выполнить: "1. - Этап расчета ГТУ"')
         else:
@@ -686,7 +685,7 @@ if check_password():
                 st.session_state.stage_list = list(st.session_state.stage_dict.values()) 
                 st.table(stageTable(st.session_state.stage_list))
 
-    if panel_global == "3. - Этап расчета по сечениям":
+    if panel_global == "III. - Этап расчета по сечениям":
         if st.session_state.number_of_steps_ == 0.0:
             st.header('Необходимо выполнить: "2. - Этап расчета ступеней ГТУ"')
         else:
@@ -732,5 +731,5 @@ if check_password():
                             st.pyplot(velocity_triangle_i(C_1_i = st.session_state.stagessection[2][0], W_1_i = st.session_state.stagessection[2][1], U_1_i = st.session_state.stagessection[2][2], alpha_1_i = st.session_state.stagessection[2][3], betta_1_i = st.session_state.stagessection[2][4],
                             C_2_i = st.session_state.stagessection[2][5], W_2_i = st.session_state.stagessection[2][6], U_2_i = st.session_state.stagessection[2][7], alpha_2_i = st.session_state.stagessection[2][8], betta_2_i = st.session_state.stagessection[2][9]))
 
-    if panel_global == "4. - Этап профилирование":
+    if panel_global == "IV. - Этап профилирование":
         st.caption('Находится в стадии разработки')
