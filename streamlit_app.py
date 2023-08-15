@@ -678,10 +678,13 @@ if check_password():
         if panel_2 == 'Параметры расчета по ступеням':
             st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Результаты расчета на среднем диаметре</ins></h1>", unsafe_allow_html=True)
             st.session_state.stage_dict = {}
-            for n in st.session_state.paramstage[0].keys():
-                st.session_state.stage_dict[n] = list(d[n] for d in st.session_state.paramstage)
-            st.session_state.stage_list = list(st.session_state.stage_dict.values()) 
-            st.table(stageTable(st.session_state.stage_list))
+            if not st.session_state.paramstage[0].keys():
+                st.header('Необходимо выполнить Этап расчета ГТУ')
+            else:
+                for n in st.session_state.paramstage[0].keys():
+                    st.session_state.stage_dict[n] = list(d[n] for d in st.session_state.paramstage)
+                st.session_state.stage_list = list(st.session_state.stage_dict.values()) 
+                st.table(stageTable(st.session_state.stage_list))
 
     if panel_global == "3. - Этап расчета по сечениям":
         
