@@ -363,372 +363,373 @@ if check_password():
 
                     Save_to_file_stage(distribution_table(st.session_state.parametergtu[2], method = 'kinematics'), name = 'ParameterGTU(kinematics)', extension ='.xlsx')
                     Save_to_file_stage(distribution_table(st.session_state.parametergtu[3], method = 'termod'), name = 'ParameterGTU(termod)', extension ='.xlsx')
-
+    
     if panel_global == "2. - Этап расчета ступеней ГТУ":
-        
-        stage_str = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
-        stage_str.append('Параметры расчета по ступеням')
-        panel_2 = st.sidebar.radio('Этапы расчета ступени:', stage_str)
-        
-        num = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
-        for i in range(int(st.session_state.number_of_steps_)):
+        if not st.session_state.number_of_steps_:
+            st.header('Необходимо выполнить: "1. - Этап расчета ГТУ"')
+        else:
+            stage_str = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
+            stage_str.append('Параметры расчета по ступеням')
+            panel_2 = st.sidebar.radio('Этапы расчета ступени:', stage_str)
+            
+            num = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
+            for i in range(int(st.session_state.number_of_steps_)):
 
-            if panel_2 == num[i]:
-                st.session_state.stages = None
-                st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Расчет ступени ГТУ на среднем диаметре</ins></h1>", unsafe_allow_html=True)
+                if panel_2 == num[i]:
+                    st.session_state.stages = None
+                    st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Расчет ступени ГТУ на среднем диаметре</ins></h1>", unsafe_allow_html=True)
 
-                st.header(f'Ввод исходных данных ступени №{i+1}')
-                with st.form(key = 'my_form_6'): 
-                    select_2 = st.selectbox('Выбор типа ступени:', ('Неохлаждаемая ступень', 'Охлаждаемая ступень'))   
-                    if st.form_submit_button('Выбрать'):
-                        if i == 0:
-                            st.session_state.consumption = []
-                            st.session_state.paramstage = []
-
-                        st.session_state.value1_sopl_, st.session_state.value1_rab_ = 0.0, 0.0
-                        st.session_state.value2_sopl_, st.session_state.value2_rab_ = 0.0, 0.0
-                        st.session_state.value3_sopl_, st.session_state.value3_rab_ = 0.0, 0.0
-                        st.session_state.method_bandage = 0.0
-
-                        st.session_state.g_standard_sopl, st.session_state.g_standard_rab = 0.0, 0.0
-                        st.session_state.T_metal_sopl, st.session_state.T_metal_rab = 0.0, 0.0
-                        
-                    if select_2 == 'Неохлаждаемая ступень':
-                        st.header('Параметры сопловой:') 
-                        param_2 = countSRVVV(i, 'sopl')   
-                        st.session_state.value1_sopl_ = param_2[0]
-                        st.session_state.value2_sopl_ = param_2[1]
-                        st.session_state.value3_sopl_ = param_2[2]
-                        losses_sopl = st.selectbox('Модель потерь для сопловой решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
-                        
-                        if st.form_submit_button('Выбрать '):
-                            st.session_state.method_losses_sopl = True
-                            st.session_state.coef_sopl_ = 0.0
-                            st.session_state.B_sopl_ = 0.0
-                            st.session_state.ks_sopl_ = 0.0
-                            st.session_state.sorU_sopl_ = 0.0
-
-                        if losses_sopl == 'Ainley and Mathieson losses':
-                            param_3 = countLosses(i,'ANM', 'sopl')   
-                            st.session_state.coef_sopl_ = param_3[0]
-                            st.session_state.B_sopl_ = param_3[1]
-                            st.session_state.method_losses_sopl = 'ANM'
-
-                        if losses_sopl == 'Craig and Cox losses':
-                            param_3 = countLosses(i,'CAC', 'sopl')   
-                            st.session_state.ks_sopl_ = param_3[0]
-                            st.session_state.method_losses_sopl = 'CAC'
-
-                        if losses_sopl == 'CIAM losses':
-                            st.session_state.method_losses_sopl = 'CIAM'
-
-                        if losses_sopl == 'Denton losses':
-                            param_3 = countLosses(i,'DN', 'sopl')   
-                            st.session_state.sorU_sopl_ = param_3[0]
-                            st.session_state.method_losses_sopl = 'DN'
-
-                        if losses_sopl == 'Soderberg losses':
-                            st.session_state.method_losses_sopl = 'SDB'                  
-
-                        st.header('Параметры рабочей:') 
-                        param_4 = countSRVVV(i, 'rab') 
-                        st.session_state.value1_rab_ = param_4[0]
-                        st.session_state.value2_rab_ = param_4[1]
-                        st.session_state.value3_rab_ = param_4[2]
-                        losses_rab = st.selectbox('Модель потерь для рабочей решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
-                        select_3 = st.radio('Наличие бандажа:', ('Отсутствует', 'Присутствует'))                   
-                        
-                        if st.form_submit_button('Выбрать  '):
-                            if select_3 == 'Отсутствует':
-                                st.session_state.method_bandage = False
-                            if  select_3 == 'Присутствует':
-                                st.session_state.method_bandage = True
-
-                            st.session_state.method_losses_rab = True
-                            st.session_state.coef_rab_ = 0.0
-                            st.session_state.B_rab_ = 0.0
-                            st.session_state.ks_rab_ = 0.0
-                            st.session_state.sorU_rab_ = 0.0  
-
-                        if losses_rab == 'Ainley and Mathieson losses':
-                            param_4 = countLosses(i,'ANM', 'rab')   
-                            st.session_state.coef_rab_ = param_4[0]
-                            st.session_state.B_rab_ = param_4[1]
-                            st.session_state.method_losses_rab = 'ANM'
-
-                        if losses_rab == 'Craig and Cox losses':
-                            param_4 = countLosses(i,'CAC', 'rab')   
-                            st.session_state.ks_rab_ = param_4[0]
-                            st.session_state.method_losses_rab = 'CAC'
-                        
-                        if losses_rab == 'CIAM losses':
-                            st.session_state.method_losses_rab = 'CIAM'
-
-                        if losses_rab == 'Denton losses':
-                            param_4 = countLosses(i,'DN', 'rab')   
-                            st.session_state.sorU_rab_ = param_4[0]
-                            st.session_state.method_losses_rab = 'DN'
-
-                        if losses_rab == 'Soderberg losses':
-                            st.session_state.method_losses_rab = 'SDB' 
-
-                        if st.form_submit_button('Расчет'):
-
-                            fuel = gas(_H_2S = st.session_state.H_2S_, _CO_2 = st.session_state.CO_2_, _O_2 = st.session_state.O_2_, _CO = st.session_state.CO_, _H_2 = st.session_state.H_2_, _CH_2 = st.session_state.CH_2_, _CH_4 = st.session_state.CH_4_, _C_2H_4 = st.session_state.C_2H_4_, _C_2H_6 = st.session_state.C_2H_6_, _C_3H_8 = st.session_state.C_3H_8_, _C_4H_10 = st.session_state.C_4H_10_, temperature_C = temperature_Cels)
-                            st.session_state.fuel = fuel
-                            schemegtu = scheme(fuel = st.session_state.fuel, ele_power = st.session_state.ele_power_, t_c = st.session_state.t_c_,
-                                        t_a = st.session_state.t_a_, P_a = st.session_state.P_a_, epsilon = st.session_state.epsilon_, coefficient_pressure_loss = st.session_state.pressure_loss_,
-                                        etta_c_c = st.session_state.etta_c_c_, etta_mch = st.session_state.etta_mch_, etta_e_g = st.session_state.etta_e_g_,
-                                        etta_is_t = st.session_state.etta_is_t_, etta_is_k = st.session_state.etta_is_k_, leak_rate = st.session_state.leak_rate_, t_w = st.session_state.t_w_, z = st.session_state.z_, method = st.session_state.count34)
-                            st.session_state.schemegtu = schemegtu            
-                            geometrygtu = geometry(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, number_of_steps = int(st.session_state.number_of_steps_), axial_speed_input = st.session_state.axial_speed_input_,
-                                axial_speed_outlet = st.session_state.axial_speed_outlet_,D_sr__h_2_z = st.session_state.D_sr__h_2_z_, 
-                                K_s = st.session_state.K_s_, K_r = st.session_state.K_r_, radial_clearance = st.session_state.radial_clearance_, method = st.session_state.count33)
-                            st.session_state.geometrygtu = geometrygtu
-                            parametergtu = parameters(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, alpha_02_i = st.session_state.alpha_, delta_H = st.session_state.deltaH_, periodicity = st.session_state.periodicity_)
-                            st.session_state.parametergtu = parametergtu
-                            
+                    st.header(f'Ввод исходных данных ступени №{i+1}')
+                    with st.form(key = 'my_form_6'): 
+                        select_2 = st.selectbox('Выбор типа ступени:', ('Неохлаждаемая ступень', 'Охлаждаемая ступень'))   
+                        if st.form_submit_button('Выбрать'):
                             if i == 0:
-                                stages = stage(fuel = st.session_state.fuel , sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.schemegtu[2]['G_t'], 
-                                    value1_sopl = st.session_state.value1_sopl_, value1_rab = st.session_state.value1_rab_ , value2_sopl = st.session_state.value2_sopl_, value2_rab = st.session_state.value2_rab_ , value3_sopl = st.session_state.value3_sopl_, value3_rab = st.session_state.value3_rab_ , 
-                                    coef_sopl = st.session_state.coef_sopl_, coef_rab = st.session_state.coef_rab_, B_sopl = st.session_state.B_sopl_, B_rab = st.session_state.B_rab_, SorU_sopl = st.session_state.sorU_sopl_, SorU_rab = st.session_state.sorU_rab_, 
-                                    ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage = st.session_state.method_bandage, n = i)
-                                st.session_state.stages = stages 
-                                
-                                st.session_state.consumption = [] 
-                                st.session_state.consumption.insert(0, st.session_state.stages[4])  
-                                st.write(st.session_state.consumption)  
-
+                                st.session_state.consumption = []
                                 st.session_state.paramstage = []
-                                st.session_state.paramstage.insert(0, st.session_state.stages[0])
-                                st.write(st.session_state.paramstage)                            
 
-                            else:
-                                stages = stage(fuel = st.session_state.fuel , sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.consumption[i-1], 
+                            st.session_state.value1_sopl_, st.session_state.value1_rab_ = 0.0, 0.0
+                            st.session_state.value2_sopl_, st.session_state.value2_rab_ = 0.0, 0.0
+                            st.session_state.value3_sopl_, st.session_state.value3_rab_ = 0.0, 0.0
+                            st.session_state.method_bandage = 0.0
+
+                            st.session_state.g_standard_sopl, st.session_state.g_standard_rab = 0.0, 0.0
+                            st.session_state.T_metal_sopl, st.session_state.T_metal_rab = 0.0, 0.0
+                            
+                        if select_2 == 'Неохлаждаемая ступень':
+                            st.header('Параметры сопловой:') 
+                            param_2 = countSRVVV(i, 'sopl')   
+                            st.session_state.value1_sopl_ = param_2[0]
+                            st.session_state.value2_sopl_ = param_2[1]
+                            st.session_state.value3_sopl_ = param_2[2]
+                            losses_sopl = st.selectbox('Модель потерь для сопловой решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
+                            
+                            if st.form_submit_button('Выбрать '):
+                                st.session_state.method_losses_sopl = True
+                                st.session_state.coef_sopl_ = 0.0
+                                st.session_state.B_sopl_ = 0.0
+                                st.session_state.ks_sopl_ = 0.0
+                                st.session_state.sorU_sopl_ = 0.0
+
+                            if losses_sopl == 'Ainley and Mathieson losses':
+                                param_3 = countLosses(i,'ANM', 'sopl')   
+                                st.session_state.coef_sopl_ = param_3[0]
+                                st.session_state.B_sopl_ = param_3[1]
+                                st.session_state.method_losses_sopl = 'ANM'
+
+                            if losses_sopl == 'Craig and Cox losses':
+                                param_3 = countLosses(i,'CAC', 'sopl')   
+                                st.session_state.ks_sopl_ = param_3[0]
+                                st.session_state.method_losses_sopl = 'CAC'
+
+                            if losses_sopl == 'CIAM losses':
+                                st.session_state.method_losses_sopl = 'CIAM'
+
+                            if losses_sopl == 'Denton losses':
+                                param_3 = countLosses(i,'DN', 'sopl')   
+                                st.session_state.sorU_sopl_ = param_3[0]
+                                st.session_state.method_losses_sopl = 'DN'
+
+                            if losses_sopl == 'Soderberg losses':
+                                st.session_state.method_losses_sopl = 'SDB'                  
+
+                            st.header('Параметры рабочей:') 
+                            param_4 = countSRVVV(i, 'rab') 
+                            st.session_state.value1_rab_ = param_4[0]
+                            st.session_state.value2_rab_ = param_4[1]
+                            st.session_state.value3_rab_ = param_4[2]
+                            losses_rab = st.selectbox('Модель потерь для рабочей решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
+                            select_3 = st.radio('Наличие бандажа:', ('Отсутствует', 'Присутствует'))                   
+                            
+                            if st.form_submit_button('Выбрать  '):
+                                if select_3 == 'Отсутствует':
+                                    st.session_state.method_bandage = False
+                                if  select_3 == 'Присутствует':
+                                    st.session_state.method_bandage = True
+
+                                st.session_state.method_losses_rab = True
+                                st.session_state.coef_rab_ = 0.0
+                                st.session_state.B_rab_ = 0.0
+                                st.session_state.ks_rab_ = 0.0
+                                st.session_state.sorU_rab_ = 0.0  
+
+                            if losses_rab == 'Ainley and Mathieson losses':
+                                param_4 = countLosses(i,'ANM', 'rab')   
+                                st.session_state.coef_rab_ = param_4[0]
+                                st.session_state.B_rab_ = param_4[1]
+                                st.session_state.method_losses_rab = 'ANM'
+
+                            if losses_rab == 'Craig and Cox losses':
+                                param_4 = countLosses(i,'CAC', 'rab')   
+                                st.session_state.ks_rab_ = param_4[0]
+                                st.session_state.method_losses_rab = 'CAC'
+                            
+                            if losses_rab == 'CIAM losses':
+                                st.session_state.method_losses_rab = 'CIAM'
+
+                            if losses_rab == 'Denton losses':
+                                param_4 = countLosses(i,'DN', 'rab')   
+                                st.session_state.sorU_rab_ = param_4[0]
+                                st.session_state.method_losses_rab = 'DN'
+
+                            if losses_rab == 'Soderberg losses':
+                                st.session_state.method_losses_rab = 'SDB' 
+
+                            if st.form_submit_button('Расчет'):
+
+                                fuel = gas(_H_2S = st.session_state.H_2S_, _CO_2 = st.session_state.CO_2_, _O_2 = st.session_state.O_2_, _CO = st.session_state.CO_, _H_2 = st.session_state.H_2_, _CH_2 = st.session_state.CH_2_, _CH_4 = st.session_state.CH_4_, _C_2H_4 = st.session_state.C_2H_4_, _C_2H_6 = st.session_state.C_2H_6_, _C_3H_8 = st.session_state.C_3H_8_, _C_4H_10 = st.session_state.C_4H_10_, temperature_C = temperature_Cels)
+                                st.session_state.fuel = fuel
+                                schemegtu = scheme(fuel = st.session_state.fuel, ele_power = st.session_state.ele_power_, t_c = st.session_state.t_c_,
+                                            t_a = st.session_state.t_a_, P_a = st.session_state.P_a_, epsilon = st.session_state.epsilon_, coefficient_pressure_loss = st.session_state.pressure_loss_,
+                                            etta_c_c = st.session_state.etta_c_c_, etta_mch = st.session_state.etta_mch_, etta_e_g = st.session_state.etta_e_g_,
+                                            etta_is_t = st.session_state.etta_is_t_, etta_is_k = st.session_state.etta_is_k_, leak_rate = st.session_state.leak_rate_, t_w = st.session_state.t_w_, z = st.session_state.z_, method = st.session_state.count34)
+                                st.session_state.schemegtu = schemegtu            
+                                geometrygtu = geometry(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, number_of_steps = int(st.session_state.number_of_steps_), axial_speed_input = st.session_state.axial_speed_input_,
+                                    axial_speed_outlet = st.session_state.axial_speed_outlet_,D_sr__h_2_z = st.session_state.D_sr__h_2_z_, 
+                                    K_s = st.session_state.K_s_, K_r = st.session_state.K_r_, radial_clearance = st.session_state.radial_clearance_, method = st.session_state.count33)
+                                st.session_state.geometrygtu = geometrygtu
+                                parametergtu = parameters(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, alpha_02_i = st.session_state.alpha_, delta_H = st.session_state.deltaH_, periodicity = st.session_state.periodicity_)
+                                st.session_state.parametergtu = parametergtu
+                                
+                                if i == 0:
+                                    stages = stage(fuel = st.session_state.fuel , sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.schemegtu[2]['G_t'], 
                                         value1_sopl = st.session_state.value1_sopl_, value1_rab = st.session_state.value1_rab_ , value2_sopl = st.session_state.value2_sopl_, value2_rab = st.session_state.value2_rab_ , value3_sopl = st.session_state.value3_sopl_, value3_rab = st.session_state.value3_rab_ , 
                                         coef_sopl = st.session_state.coef_sopl_, coef_rab = st.session_state.coef_rab_, B_sopl = st.session_state.B_sopl_, B_rab = st.session_state.B_rab_, SorU_sopl = st.session_state.sorU_sopl_, SorU_rab = st.session_state.sorU_rab_, 
-                                        ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage =  st.session_state.method_bandage, n = i)
-                                st.session_state.stages = stages
+                                        ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage = st.session_state.method_bandage, n = i)
+                                    st.session_state.stages = stages 
+                                    
+                                    st.session_state.consumption = [] 
+                                    st.session_state.consumption.insert(0, st.session_state.stages[4])  
+                                    st.write(st.session_state.consumption)  
+
+                                    st.session_state.paramstage = []
+                                    st.session_state.paramstage.insert(0, st.session_state.stages[0])
+                                    st.write(st.session_state.paramstage)                            
+
+                                else:
+                                    stages = stage(fuel = st.session_state.fuel , sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.consumption[i-1], 
+                                            value1_sopl = st.session_state.value1_sopl_, value1_rab = st.session_state.value1_rab_ , value2_sopl = st.session_state.value2_sopl_, value2_rab = st.session_state.value2_rab_ , value3_sopl = st.session_state.value3_sopl_, value3_rab = st.session_state.value3_rab_ , 
+                                            coef_sopl = st.session_state.coef_sopl_, coef_rab = st.session_state.coef_rab_, B_sopl = st.session_state.B_sopl_, B_rab = st.session_state.B_rab_, SorU_sopl = st.session_state.sorU_sopl_, SorU_rab = st.session_state.sorU_rab_, 
+                                            ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage =  st.session_state.method_bandage, n = i)
+                                    st.session_state.stages = stages
+                                    
+                                    if len(st.session_state.consumption) == i: 
+                                        st.session_state.consumption.insert(i, st.session_state.stages[4])
+                                        st.session_state.paramstage.insert(i, st.session_state.stages[0])
+                                    else: 
+                                        st.session_state.consumption[i] = st.session_state.stages[4]
+                                        st.session_state.paramstage[i] = st.session_state.stages[0]
+                                    
+                                    st.write(st.session_state.consumption)    
+                                    st.write(st.session_state.paramstage) 
+
+                                st.header('Термодинамические и кинематические параметры')
+                                st.table(stage_table(st.session_state.stages[0], method = 'parameters'))
+                                st.header('Геометрические параметры профиля сопловой')
+                                st.table(stage_table(st.session_state.stages[5], method = "profile sopl"))
+                                st.header('Геометрические параметры профиля рабочей')
+                                st.table(stage_table(st.session_state.stages[6], method = "profile rab"))
+                                st.pyplot(hs_plot(point0_ = st.session_state.stages[1][0], point1s = st.session_state.stages[1][1], point1 = st.session_state.stages[1][2], point1_ = st.session_state.stages[1][3], point1w_ = st.session_state.stages[1][4], 
+                                point2s = st.session_state.stages[1][5], point2 = st.session_state.stages[1][6], point2_ = st.session_state.stages[1][7], point2s_ = st.session_state.stages[1][8], point2w_ = st.session_state.stages[1][9], i = st.session_state.stages[3], method = 'notcold')) 
                                 
-                                if len(st.session_state.consumption) == i: 
-                                    st.session_state.consumption.insert(i, st.session_state.stages[4])
-                                    st.session_state.paramstage.insert(i, st.session_state.stages[0])
-                                else: 
-                                    st.session_state.consumption[i] = st.session_state.stages[4]
-                                    st.session_state.paramstage[i] = st.session_state.stages[0]
+                                st.pyplot(velocity_triangle_plot(C_1 = st.session_state.stages[2][0], W_1 = st.session_state.stages[2][1], U_1 = st.session_state.stages[2][2], alpha_1 = st.session_state.stages[2][3], betta_1 = st.session_state.stages[2][4], C_2 = st.session_state.stages[2][5], W_2 = st.session_state.stages[2][6], U_2 = st.session_state.stages[2][7], alpha_2 = st.session_state.stages[2][8], betta_2 = st.session_state.stages[2][9], i = st.session_state.stages[3]))
+                
+                        if select_2 == 'Охлаждаемая ступень':
+                            st.header('Параметры сопловой:')
+                            param_5 = countSTGKT(i, 'sopl')   
+                            st.session_state.g_standard_sopl = param_5[0]
+                            st.session_state.T_metal_sopl = param_5[1]
+                            param_2 = countSRVVV(i, 'sopl')   
+                            st.session_state.value1_sopl_ = param_2[0]
+                            st.session_state.value2_sopl_ = param_2[1]
+                            st.session_state.value3_sopl_ = param_2[2]
+                            losses_sopl = st.selectbox('Модель потерь для сопловой решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
+                            
+                            if st.form_submit_button('Выбрать '):
+                                st.session_state.method_losses_sopl = True
+                                st.session_state.coef_sopl_ = 0.0
+                                st.session_state.B_sopl_ = 0.0
+                                st.session_state.ks_sopl_ = 0.0
+                                st.session_state.sorU_sopl_ = 0.0
+
+                            if losses_sopl == 'Ainley and Mathieson losses':
+                                param_3 = countLosses(i,'ANM', 'sopl')   
+                                st.session_state.coef_sopl_ = param_3[0]
+                                st.session_state.B_sopl_ = param_3[1]
+                                st.session_state.method_losses_sopl = 'ANM'
+
+                            if losses_sopl == 'Craig and Cox losses':
+                                param_3 = countLosses(i,'CAC', 'sopl')   
+                                st.session_state.ks_sopl_ = param_3[0]
+                                st.session_state.method_losses_sopl = 'CAC'
+
+                            if losses_sopl == 'CIAM losses':
+                                st.session_state.method_losses_sopl = 'CIAM'
+
+                            if losses_sopl == 'Denton losses':
+                                param_3 = countLosses(i,'DN', 'sopl')   
+                                st.session_state.sorU_sopl_ = param_3[0]
+                                st.session_state.method_losses_sopl = 'DN'
+
+                            if losses_sopl == 'Soderberg losses':
+                                st.session_state.method_losses_sopl = 'SDB'
+
+                            st.header('Параметры рабочей:') 
+                            param_6 = countSTGKT(i, 'rab')   
+                            st.session_state.g_standard_rab = param_6[0]
+                            st.session_state.T_metal_rab = param_6[1]   
+                            param_4 = countSRVVV(i, 'rab') 
+                            st.session_state.value1_rab_ = param_4[0]
+                            st.session_state.value2_rab_ = param_4[1]
+                            st.session_state.value3_rab_ = param_4[2]
+                            losses_rab = st.selectbox('Модель потерь для рабочей решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
+                            select_3 = st.radio('Наличие бандажа:', ('Отсутствует', 'Присутствует'))                   
+                            
+                            if st.form_submit_button('Выбрать  '):
+                                if select_3 == 'Отсутствует':
+                                    st.session_state.method_bandage = False
+                                if  select_3 == 'Присутствует':
+                                    st.session_state.method_bandage = True
+
+                                st.session_state.method_losses_rab = True
+                                st.session_state.coef_rab_ = 0.0
+                                st.session_state.B_rab_ = 0.0
+                                st.session_state.ks_rab_ = 0.0
+                                st.session_state.sorU_rab_ = 0.0  
+
+                            if losses_rab == 'Ainley and Mathieson losses':
+                                param_4 = countLosses(i,'ANM', 'rab')   
+                                st.session_state.coef_rab_ = param_4[0]
+                                st.session_state.B_rab_ = param_4[1]
+                                st.session_state.method_losses_rab = 'ANM'
+
+                            if losses_rab == 'Craig and Cox losses':
+                                param_4 = countLosses(i,'CAC', 'rab')   
+                                st.session_state.ks_rab_ = param_4[0]
+                                st.session_state.method_losses_rab = 'CAC'
+                            
+                            if losses_rab == 'CIAM losses':
+                                st.session_state.method_losses_rab = 'CIAM'
+
+                            if losses_rab == 'Denton losses':
+                                param_4 = countLosses(i,'DN', 'rab')   
+                                st.session_state.sorU_rab_ = param_4[0]
+                                st.session_state.method_losses_rab = 'DN'
+
+                            if losses_rab == 'Soderberg losses':
+                                st.session_state.method_losses_rab = 'SDB' 
+                            
+                            if st.form_submit_button('Расчет'):
+
+                                fuel = gas(_H_2S = st.session_state.H_2S_, _CO_2 = st.session_state.CO_2_, _O_2 = st.session_state.O_2_, _CO = st.session_state.CO_, _H_2 = st.session_state.H_2_, _CH_2 = st.session_state.CH_2_, _CH_4 = st.session_state.CH_4_, _C_2H_4 = st.session_state.C_2H_4_, _C_2H_6 = st.session_state.C_2H_6_, _C_3H_8 = st.session_state.C_3H_8_, _C_4H_10 = st.session_state.C_4H_10_, temperature_C = temperature_Cels)
+                                st.session_state.fuel = fuel
+                                schemegtu = scheme(fuel = st.session_state.fuel, ele_power = st.session_state.ele_power_, t_c = st.session_state.t_c_,
+                                            t_a = st.session_state.t_a_, P_a = st.session_state.P_a_, epsilon = st.session_state.epsilon_, coefficient_pressure_loss = st.session_state.pressure_loss_,
+                                            etta_c_c = st.session_state.etta_c_c_, etta_mch = st.session_state.etta_mch_, etta_e_g = st.session_state.etta_e_g_,
+                                            etta_is_t = st.session_state.etta_is_t_, etta_is_k = st.session_state.etta_is_k_, leak_rate = st.session_state.leak_rate_, t_w = st.session_state.t_w_, z = st.session_state.z_, method = st.session_state.count34)
+                                st.session_state.schemegtu = schemegtu            
+                                geometrygtu = geometry(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, number_of_steps = int(st.session_state.number_of_steps_), axial_speed_input = st.session_state.axial_speed_input_,
+                                    axial_speed_outlet = st.session_state.axial_speed_outlet_,D_sr__h_2_z = st.session_state.D_sr__h_2_z_, 
+                                    K_s = st.session_state.K_s_, K_r = st.session_state.K_r_, radial_clearance = st.session_state.radial_clearance_, method = st.session_state.count33)
+                                st.session_state.geometrygtu = geometrygtu
+                                parametergtu = parameters(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, alpha_02_i = st.session_state.alpha_, delta_H = st.session_state.deltaH_, periodicity = st.session_state.periodicity_)
+                                st.session_state.parametergtu = parametergtu
                                 
-                                st.write(st.session_state.consumption)    
-                                st.write(st.session_state.paramstage) 
+                                if i == 0:
+                                    stages = stagecold(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.schemegtu[2]['G_t_notcool'],
+                                            value1_sopl = st.session_state.value1_sopl_, value1_rab = st.session_state.value1_rab_, value2_sopl = st.session_state.value2_sopl_, value2_rab = st.session_state.value2_rab_, value3_sopl = st.session_state.value3_sopl_, value3_rab = st.session_state.value3_rab_,
+                                            coef_sopl = st.session_state.coef_sopl_, coef_rab = st.session_state.coef_rab_, B_sopl = st.session_state.B_sopl_, B_rab = st.session_state.B_rab_, SorU_sopl = st.session_state.sorU_sopl_, SorU_rab = st.session_state.sorU_rab_, 
+                                            ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, g_standard_sopl = st.session_state.g_standard_sopl, g_standard_rab = st.session_state.g_standard_rab,
+                                            T_metal_sopl = st.session_state.T_metal_sopl, T_metal_rab = st.session_state.T_metal_rab, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage = st.session_state.method_bandage, n = i)
+                                    st.session_state.stages = stages 
+                                                            
+                                    st.session_state.consumption = [] 
+                                    st.session_state.consumption.insert(0, st.session_state.stages[4])  
+                                    st.write(st.session_state.consumption) 
 
-                            st.header('Термодинамические и кинематические параметры')
-                            st.table(stage_table(st.session_state.stages[0], method = 'parameters'))
-                            st.header('Геометрические параметры профиля сопловой')
-                            st.table(stage_table(st.session_state.stages[5], method = "profile sopl"))
-                            st.header('Геометрические параметры профиля рабочей')
-                            st.table(stage_table(st.session_state.stages[6], method = "profile rab"))
-                            st.pyplot(hs_plot(point0_ = st.session_state.stages[1][0], point1s = st.session_state.stages[1][1], point1 = st.session_state.stages[1][2], point1_ = st.session_state.stages[1][3], point1w_ = st.session_state.stages[1][4], 
-                            point2s = st.session_state.stages[1][5], point2 = st.session_state.stages[1][6], point2_ = st.session_state.stages[1][7], point2s_ = st.session_state.stages[1][8], point2w_ = st.session_state.stages[1][9], i = st.session_state.stages[3], method = 'notcold')) 
-                            
-                            st.pyplot(velocity_triangle_plot(C_1 = st.session_state.stages[2][0], W_1 = st.session_state.stages[2][1], U_1 = st.session_state.stages[2][2], alpha_1 = st.session_state.stages[2][3], betta_1 = st.session_state.stages[2][4], C_2 = st.session_state.stages[2][5], W_2 = st.session_state.stages[2][6], U_2 = st.session_state.stages[2][7], alpha_2 = st.session_state.stages[2][8], betta_2 = st.session_state.stages[2][9], i = st.session_state.stages[3]))
-            
-                    if select_2 == 'Охлаждаемая ступень':
-                        st.header('Параметры сопловой:')
-                        param_5 = countSTGKT(i, 'sopl')   
-                        st.session_state.g_standard_sopl = param_5[0]
-                        st.session_state.T_metal_sopl = param_5[1]
-                        param_2 = countSRVVV(i, 'sopl')   
-                        st.session_state.value1_sopl_ = param_2[0]
-                        st.session_state.value2_sopl_ = param_2[1]
-                        st.session_state.value3_sopl_ = param_2[2]
-                        losses_sopl = st.selectbox('Модель потерь для сопловой решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
-                        
-                        if st.form_submit_button('Выбрать '):
-                            st.session_state.method_losses_sopl = True
-                            st.session_state.coef_sopl_ = 0.0
-                            st.session_state.B_sopl_ = 0.0
-                            st.session_state.ks_sopl_ = 0.0
-                            st.session_state.sorU_sopl_ = 0.0
+                                    st.session_state.paramstage = []
+                                    st.session_state.paramstage.insert(0, st.session_state.stages[0])
+                                    st.write(st.session_state.paramstage)  
+                                    
+                                else:
+                                    stages = stagecold(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.consumption[i-1],
+                                            value1_sopl = st.session_state.value1_sopl_, value1_rab = st.session_state.value1_rab_, value2_sopl = st.session_state.value2_sopl_, value2_rab = st.session_state.value2_rab_, value3_sopl = st.session_state.value3_sopl_, value3_rab = st.session_state.value3_rab_,
+                                            coef_sopl = st.session_state.coef_sopl_, coef_rab = st.session_state.coef_rab_, B_sopl = st.session_state.B_sopl_, B_rab = st.session_state.B_rab_, SorU_sopl = st.session_state.sorU_sopl_, SorU_rab = st.session_state.sorU_rab_, 
+                                            ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, g_standard_sopl = st.session_state.g_standard_sopl, g_standard_rab = st.session_state.g_standard_rab,
+                                            T_metal_sopl = st.session_state.T_metal_sopl, T_metal_rab = st.session_state.T_metal_rab, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage = st.session_state.method_bandage, n = i)
+                                    st.session_state.stages = stages 
 
-                        if losses_sopl == 'Ainley and Mathieson losses':
-                            param_3 = countLosses(i,'ANM', 'sopl')   
-                            st.session_state.coef_sopl_ = param_3[0]
-                            st.session_state.B_sopl_ = param_3[1]
-                            st.session_state.method_losses_sopl = 'ANM'
+                                    if len(st.session_state.consumption) == i: 
+                                        st.session_state.consumption.insert(i, st.session_state.stages[4])
+                                        st.session_state.paramstage.insert(i, st.session_state.stages[0])
+                                    else: 
+                                        st.session_state.consumption[i] = st.session_state.stages[4]
+                                        st.session_state.paramstage[i] = st.session_state.stages[0]
+                                    st.write(st.session_state.consumption)                                 
+                                    st.write(st.session_state.paramstage) 
 
-                        if losses_sopl == 'Craig and Cox losses':
-                            param_3 = countLosses(i,'CAC', 'sopl')   
-                            st.session_state.ks_sopl_ = param_3[0]
-                            st.session_state.method_losses_sopl = 'CAC'
-
-                        if losses_sopl == 'CIAM losses':
-                            st.session_state.method_losses_sopl = 'CIAM'
-
-                        if losses_sopl == 'Denton losses':
-                            param_3 = countLosses(i,'DN', 'sopl')   
-                            st.session_state.sorU_sopl_ = param_3[0]
-                            st.session_state.method_losses_sopl = 'DN'
-
-                        if losses_sopl == 'Soderberg losses':
-                            st.session_state.method_losses_sopl = 'SDB'
-
-                        st.header('Параметры рабочей:') 
-                        param_6 = countSTGKT(i, 'rab')   
-                        st.session_state.g_standard_rab = param_6[0]
-                        st.session_state.T_metal_rab = param_6[1]   
-                        param_4 = countSRVVV(i, 'rab') 
-                        st.session_state.value1_rab_ = param_4[0]
-                        st.session_state.value2_rab_ = param_4[1]
-                        st.session_state.value3_rab_ = param_4[2]
-                        losses_rab = st.selectbox('Модель потерь для рабочей решетки', options = ('Ainley and Mathieson losses', 'Craig and Cox losses', 'CIAM losses', 'Denton losses','Soderberg losses'))
-                        select_3 = st.radio('Наличие бандажа:', ('Отсутствует', 'Присутствует'))                   
-                        
-                        if st.form_submit_button('Выбрать  '):
-                            if select_3 == 'Отсутствует':
-                                st.session_state.method_bandage = False
-                            if  select_3 == 'Присутствует':
-                                st.session_state.method_bandage = True
-
-                            st.session_state.method_losses_rab = True
-                            st.session_state.coef_rab_ = 0.0
-                            st.session_state.B_rab_ = 0.0
-                            st.session_state.ks_rab_ = 0.0
-                            st.session_state.sorU_rab_ = 0.0  
-
-                        if losses_rab == 'Ainley and Mathieson losses':
-                            param_4 = countLosses(i,'ANM', 'rab')   
-                            st.session_state.coef_rab_ = param_4[0]
-                            st.session_state.B_rab_ = param_4[1]
-                            st.session_state.method_losses_rab = 'ANM'
-
-                        if losses_rab == 'Craig and Cox losses':
-                            param_4 = countLosses(i,'CAC', 'rab')   
-                            st.session_state.ks_rab_ = param_4[0]
-                            st.session_state.method_losses_rab = 'CAC'
-                        
-                        if losses_rab == 'CIAM losses':
-                            st.session_state.method_losses_rab = 'CIAM'
-
-                        if losses_rab == 'Denton losses':
-                            param_4 = countLosses(i,'DN', 'rab')   
-                            st.session_state.sorU_rab_ = param_4[0]
-                            st.session_state.method_losses_rab = 'DN'
-
-                        if losses_rab == 'Soderberg losses':
-                            st.session_state.method_losses_rab = 'SDB' 
-                        
-                        if st.form_submit_button('Расчет'):
-
-                            fuel = gas(_H_2S = st.session_state.H_2S_, _CO_2 = st.session_state.CO_2_, _O_2 = st.session_state.O_2_, _CO = st.session_state.CO_, _H_2 = st.session_state.H_2_, _CH_2 = st.session_state.CH_2_, _CH_4 = st.session_state.CH_4_, _C_2H_4 = st.session_state.C_2H_4_, _C_2H_6 = st.session_state.C_2H_6_, _C_3H_8 = st.session_state.C_3H_8_, _C_4H_10 = st.session_state.C_4H_10_, temperature_C = temperature_Cels)
-                            st.session_state.fuel = fuel
-                            schemegtu = scheme(fuel = st.session_state.fuel, ele_power = st.session_state.ele_power_, t_c = st.session_state.t_c_,
-                                        t_a = st.session_state.t_a_, P_a = st.session_state.P_a_, epsilon = st.session_state.epsilon_, coefficient_pressure_loss = st.session_state.pressure_loss_,
-                                        etta_c_c = st.session_state.etta_c_c_, etta_mch = st.session_state.etta_mch_, etta_e_g = st.session_state.etta_e_g_,
-                                        etta_is_t = st.session_state.etta_is_t_, etta_is_k = st.session_state.etta_is_k_, leak_rate = st.session_state.leak_rate_, t_w = st.session_state.t_w_, z = st.session_state.z_, method = st.session_state.count34)
-                            st.session_state.schemegtu = schemegtu            
-                            geometrygtu = geometry(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, number_of_steps = int(st.session_state.number_of_steps_), axial_speed_input = st.session_state.axial_speed_input_,
-                                axial_speed_outlet = st.session_state.axial_speed_outlet_,D_sr__h_2_z = st.session_state.D_sr__h_2_z_, 
-                                K_s = st.session_state.K_s_, K_r = st.session_state.K_r_, radial_clearance = st.session_state.radial_clearance_, method = st.session_state.count33)
-                            st.session_state.geometrygtu = geometrygtu
-                            parametergtu = parameters(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, alpha_02_i = st.session_state.alpha_, delta_H = st.session_state.deltaH_, periodicity = st.session_state.periodicity_)
-                            st.session_state.parametergtu = parametergtu
-                            
-                            if i == 0:
-                                stages = stagecold(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.schemegtu[2]['G_t_notcool'],
-                                        value1_sopl = st.session_state.value1_sopl_, value1_rab = st.session_state.value1_rab_, value2_sopl = st.session_state.value2_sopl_, value2_rab = st.session_state.value2_rab_, value3_sopl = st.session_state.value3_sopl_, value3_rab = st.session_state.value3_rab_,
-                                        coef_sopl = st.session_state.coef_sopl_, coef_rab = st.session_state.coef_rab_, B_sopl = st.session_state.B_sopl_, B_rab = st.session_state.B_rab_, SorU_sopl = st.session_state.sorU_sopl_, SorU_rab = st.session_state.sorU_rab_, 
-                                        ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, g_standard_sopl = st.session_state.g_standard_sopl, g_standard_rab = st.session_state.g_standard_rab,
-                                        T_metal_sopl = st.session_state.T_metal_sopl, T_metal_rab = st.session_state.T_metal_rab, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage = st.session_state.method_bandage, n = i)
-                                st.session_state.stages = stages 
-                                                        
-                                st.session_state.consumption = [] 
-                                st.session_state.consumption.insert(0, st.session_state.stages[4])  
-                                st.write(st.session_state.consumption) 
-
-                                st.session_state.paramstage = []
-                                st.session_state.paramstage.insert(0, st.session_state.stages[0])
-                                st.write(st.session_state.paramstage)  
+                                st.header('Термодинамические и кинематические параметры')
+                                st.table(stage_cold_table(st.session_state.stages[0], method = 'parameters'))
+                                st.header('Геометрические параметры профиля сопловой')
+                                st.table(stage_cold_table(st.session_state.stages[5], method = "profile sopl"))
+                                st.header('Геометрические параметры профиля рабочей')
+                                st.table(stage_cold_table(st.session_state.stages[6], method = "profile rab"))
+                                st.pyplot(hs_plot(point0_ = st.session_state.stages[1][0], point1s = st.session_state.stages[1][1], point1 = st.session_state.stages[1][2], point1_ = st.session_state.stages[1][3], point1w_ = st.session_state.stages[1][4], 
+                                point2s = st.session_state.stages[1][5], point2 = st.session_state.stages[1][6], point2_ = st.session_state.stages[1][7], point2s_ = st.session_state.stages[1][8], point2w_ = st.session_state.stages[1][9], i = st.session_state.stages[3], method = 'cold')) 
+                                st.pyplot(velocity_triangle_plot(C_1 = st.session_state.stages[2][0], W_1 = st.session_state.stages[2][1], U_1 = st.session_state.stages[2][2], alpha_1 = st.session_state.stages[2][3], betta_1 = st.session_state.stages[2][4], C_2 = st.session_state.stages[2][5], W_2 = st.session_state.stages[2][6], U_2 = st.session_state.stages[2][7], alpha_2 = st.session_state.stages[2][8], betta_2 = st.session_state.stages[2][9], i = st.session_state.stages[3]))
                                 
-                            else:
-                                stages = stagecold(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, distr = st.session_state.parametergtu, consumption = st.session_state.consumption[i-1],
-                                        value1_sopl = st.session_state.value1_sopl_, value1_rab = st.session_state.value1_rab_, value2_sopl = st.session_state.value2_sopl_, value2_rab = st.session_state.value2_rab_, value3_sopl = st.session_state.value3_sopl_, value3_rab = st.session_state.value3_rab_,
-                                        coef_sopl = st.session_state.coef_sopl_, coef_rab = st.session_state.coef_rab_, B_sopl = st.session_state.B_sopl_, B_rab = st.session_state.B_rab_, SorU_sopl = st.session_state.sorU_sopl_, SorU_rab = st.session_state.sorU_rab_, 
-                                        ks_sopl = st.session_state.ks_sopl_, ks_rab = st.session_state.ks_rab_, g_standard_sopl = st.session_state.g_standard_sopl, g_standard_rab = st.session_state.g_standard_rab,
-                                        T_metal_sopl = st.session_state.T_metal_sopl, T_metal_rab = st.session_state.T_metal_rab, method_losses_sopl = st.session_state.method_losses_sopl, method_losses_rab = st.session_state.method_losses_rab, method_bandage = st.session_state.method_bandage, n = i)
-                                st.session_state.stages = stages 
-
-                                if len(st.session_state.consumption) == i: 
-                                    st.session_state.consumption.insert(i, st.session_state.stages[4])
-                                    st.session_state.paramstage.insert(i, st.session_state.stages[0])
-                                else: 
-                                    st.session_state.consumption[i] = st.session_state.stages[4]
-                                    st.session_state.paramstage[i] = st.session_state.stages[0]
-                                st.write(st.session_state.consumption)                                 
-                                st.write(st.session_state.paramstage) 
-
-                            st.header('Термодинамические и кинематические параметры')
-                            st.table(stage_cold_table(st.session_state.stages[0], method = 'parameters'))
-                            st.header('Геометрические параметры профиля сопловой')
-                            st.table(stage_cold_table(st.session_state.stages[5], method = "profile sopl"))
-                            st.header('Геометрические параметры профиля рабочей')
-                            st.table(stage_cold_table(st.session_state.stages[6], method = "profile rab"))
-                            st.pyplot(hs_plot(point0_ = st.session_state.stages[1][0], point1s = st.session_state.stages[1][1], point1 = st.session_state.stages[1][2], point1_ = st.session_state.stages[1][3], point1w_ = st.session_state.stages[1][4], 
-                            point2s = st.session_state.stages[1][5], point2 = st.session_state.stages[1][6], point2_ = st.session_state.stages[1][7], point2s_ = st.session_state.stages[1][8], point2w_ = st.session_state.stages[1][9], i = st.session_state.stages[3], method = 'cold')) 
-                            st.pyplot(velocity_triangle_plot(C_1 = st.session_state.stages[2][0], W_1 = st.session_state.stages[2][1], U_1 = st.session_state.stages[2][2], alpha_1 = st.session_state.stages[2][3], betta_1 = st.session_state.stages[2][4], C_2 = st.session_state.stages[2][5], W_2 = st.session_state.stages[2][6], U_2 = st.session_state.stages[2][7], alpha_2 = st.session_state.stages[2][8], betta_2 = st.session_state.stages[2][9], i = st.session_state.stages[3]))
-                            
-        if panel_2 == 'Параметры расчета по ступеням':
-            st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Результаты расчета на среднем диаметре</ins></h1>", unsafe_allow_html=True)
-            st.session_state.stage_dict = {}
-            if not st.session_state.paramstage[0].keys():
-                st.header('Необходимо выполнить Этап расчета ГТУ')
-            else:
+            if panel_2 == 'Параметры расчета по ступеням':
+                st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Результаты расчета на среднем диаметре</ins></h1>", unsafe_allow_html=True)
+                st.session_state.stage_dict = {}
                 for n in st.session_state.paramstage[0].keys():
                     st.session_state.stage_dict[n] = list(d[n] for d in st.session_state.paramstage)
                 st.session_state.stage_list = list(st.session_state.stage_dict.values()) 
                 st.table(stageTable(st.session_state.stage_list))
 
     if panel_global == "3. - Этап расчета по сечениям":
-        
-        panel_3 = st.sidebar.radio('Этапы расчета ступени:', [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))])
-        num_1 = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
-        
-        for i in range(int(st.session_state.number_of_steps_)):
+        if not st.session_state.number_of_steps_:
+            st.header('Необходимо выполнить: "2. - Этап расчета ступеней ГТУ"')
+        else:
+            panel_3 = st.sidebar.radio('Этапы расчета ступени:', [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))])
+            num_1 = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
             
-            if panel_3 == num_1[i]:
-                st.session_state.stagessection = None
-                st.session_state.method_section = True
-                st.session_state.value_num_  = 0.0
-                st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Расчет ступени ГТУ по сечениям</ins></h1>", unsafe_allow_html=True)
+            for i in range(int(st.session_state.number_of_steps_)):
+                
+                if panel_3 == num_1[i]:
+                    st.session_state.stagessection = None
+                    st.session_state.method_section = True
+                    st.session_state.value_num_  = 0.0
+                    st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Расчет ступени ГТУ по сечениям</ins></h1>", unsafe_allow_html=True)
 
-                st.header(f'Ввод исходных данных ступени №{i+1}')
-                with st.form(key = 'my_form_7'): 
-                    select_4 = st.radio('Выбор закона закрутки:', ['Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡'])  
-                    if i == 0:
-                        st.session_state.data = []
+                    st.header(f'Ввод исходных данных ступени №{i+1}')
+                    with st.form(key = 'my_form_7'): 
+                        select_4 = st.radio('Выбор закона закрутки:', ['Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡'])  
+                        if i == 0:
+                            st.session_state.data = []
 
-                    if select_4 == 'Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡':
-                        param_7 = countNum(i)
-                        st.session_state.value_num_ = param_7
-                        st.session_state.method_section = 'rtgconst' 
+                        if select_4 == 'Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡':
+                            param_7 = countNum(i)
+                            st.session_state.value_num_ = param_7
+                            st.session_state.method_section = 'rtgconst' 
 
-                    if select_4 == 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡':
-                        param_7 = countNum(i)
-                        st.session_state.value_num_ = param_7
-                        st.session_state.method_section = 'C1uconst'                   
+                        if select_4 == 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡':
+                            param_7 = countNum(i)
+                            st.session_state.value_num_ = param_7
+                            st.session_state.method_section = 'C1uconst'                   
 
-                    if select_4 == 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡':
-                        param_7 = countNum(i)
-                        st.session_state.value_num_ = param_7
-                        st.session_state.method_section = 'alpha1const'                            
-                    
-                    if st.form_submit_button('Расчет'):                        
-                        stagessection = spin_laws_stage(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, 
-                        distr = st.session_state.parametergtu, stg = st.session_state.stage_dict, m = int(st.session_state.value_num_), 
-                        n = i, method = st.session_state.method_section)
-                        st.session_state.stagessection = stagessection
+                        if select_4 == 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡':
+                            param_7 = countNum(i)
+                            st.session_state.value_num_ = param_7
+                            st.session_state.method_section = 'alpha1const'                            
+                        
+                        if st.form_submit_button('Расчет'):                        
+                            stagessection = spin_laws_stage(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, 
+                            distr = st.session_state.parametergtu, stg = st.session_state.stage_dict, m = int(st.session_state.value_num_), 
+                            n = i, method = st.session_state.method_section)
+                            st.session_state.stagessection = stagessection
 
-                        st.table(stage_section_table(st.session_state.stagessection[1]))
-                        st.pyplot(velocity_triangle_i(C_1_i = st.session_state.stagessection[2][0], W_1_i = st.session_state.stagessection[2][1], U_1_i = st.session_state.stagessection[2][2], alpha_1_i = st.session_state.stagessection[2][3], betta_1_i = st.session_state.stagessection[2][4],
-                        C_2_i = st.session_state.stagessection[2][5], W_2_i = st.session_state.stagessection[2][6], U_2_i = st.session_state.stagessection[2][7], alpha_2_i = st.session_state.stagessection[2][8], betta_2_i = st.session_state.stagessection[2][9]))
+                            st.table(stage_section_table(st.session_state.stagessection[1]))
+                            st.pyplot(velocity_triangle_i(C_1_i = st.session_state.stagessection[2][0], W_1_i = st.session_state.stagessection[2][1], U_1_i = st.session_state.stagessection[2][2], alpha_1_i = st.session_state.stagessection[2][3], betta_1_i = st.session_state.stagessection[2][4],
+                            C_2_i = st.session_state.stagessection[2][5], W_2_i = st.session_state.stagessection[2][6], U_2_i = st.session_state.stagessection[2][7], alpha_2_i = st.session_state.stagessection[2][8], betta_2_i = st.session_state.stagessection[2][9]))
 
     if panel_global == "4. - Этап профилирование":
         st.caption('Находится в стадии разработки')
