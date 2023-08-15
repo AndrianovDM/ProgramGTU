@@ -39,7 +39,6 @@ def check_password():
         return False
     else:
         # Password correct.
-        st.session_state.number_of_steps_ = 0.0
         return True
 
 def Save_to_file_stage(stage, name , extension ):

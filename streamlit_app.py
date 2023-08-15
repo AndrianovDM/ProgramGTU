@@ -13,7 +13,6 @@ if check_password():
     
     panel_global = st.sidebar.radio('Этапы расчета:', ["Руководство пользователя", "1. - Этап расчета ГТУ", "2. - Этап расчета ступеней ГТУ", "3. - Этап расчета по сечениям", "4. - Этап профилирование"])
     if panel_global == "Руководство пользователя":
-        st.session_state.number_of_steps_ = 0.0
         st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins><em>Добро пожаловать в программу по проектированию ГТУ (version - 1.0)!</em></ins></h1>", unsafe_allow_html=True)
         st.header('')
         st.header('')
@@ -39,6 +38,7 @@ if check_password():
             st.session_state.fuel = None
 
             with st.form(key ='my_form_1'):
+                st.session_state.number_of_steps_ = 0.0
                 _CO_, _H_2_, _CH_2_, = st.columns(3)
                 _H_2S_, _CO_2_, _O_2_= st.columns(3)
                 _CH_4_, _C_2H_4_, _C_2H_6_, = st.columns(3)
