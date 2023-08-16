@@ -365,7 +365,7 @@ if check_password():
                     Save_to_file_stage(distribution_table(st.session_state.parametergtu[3], method = 'termod'), name = 'ParameterGTU(termod)', extension ='.xlsx')
     
     if panel_global == "II. - Этап расчета ступеней ГТУ":
-        if st.session_state.number_of_steps_ == None:
+        if st.session_state.number_of_steps_ == 0.0:
             st.header('Необходимо выполнить: "1. - Этап расчета ГТУ"')
         else:
             stage_str = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
@@ -686,7 +686,7 @@ if check_password():
                 st.table(stageTable(st.session_state.stage_list))
 
     if panel_global == "III. - Этап расчета по сечениям":
-        if st.session_state.number_of_steps_ == None:
+        if st.session_state.number_of_steps_ == 0.0:
             st.header('Необходимо выполнить: "2. - Этап расчета ступеней ГТУ"')
         else:
             panel_3 = st.sidebar.radio('Этапы расчета ступени:', [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))])
