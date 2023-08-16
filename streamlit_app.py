@@ -12,7 +12,7 @@ st.set_page_config(
 
 if check_password():
     
-    panel_global = st.sidebar.radio('Этапы расчета:', ["Руководство пользователя", "I. - Этап расчета ГТУ", "II. - Этап расчета ступеней ГТУ", "II. - Этап расчета по сечениям", "IV. - Этап профилирование"])
+    panel_global = st.sidebar.radio('Этапы расчета:', ["Руководство пользователя", "I. - Этап расчета ГТУ", "II. - Этап расчета ступеней ГТУ", "III. - Этап расчета по сечениям", "IV. - Этап профилирование"])
     if panel_global == "Руководство пользователя":
         st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins><em>Руководство пользователя</em></ins></h1>", unsafe_allow_html=True)
         readme()
@@ -358,7 +358,7 @@ if check_password():
     
     if panel_global == "II. - Этап расчета ступеней ГТУ":
         if st.session_state.number_of_steps_ == 0.0:
-            st.header('Необходимо выполнить: "1. - Этап расчета ГТУ"')
+            st.header('Необходимо выполнить: "I. - Этап расчета ГТУ"')
         else:
             stage_str = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
             stage_str.append('Параметры расчета по ступеням')
@@ -678,48 +678,50 @@ if check_password():
                 st.table(stageTable(st.session_state.stage_list))
 
     if panel_global == "III. - Этап расчета по сечениям":
-
-        panel_3 = st.sidebar.radio('Этапы расчета ступени:', [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))])
-        num_1 = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
-            
-        for i in range(int(st.session_state.number_of_steps_)):
+        if st.session_state.number_of_steps_ == 0.0:
+            st.header('Необходимо выполнить: "II. - Этап расчета ступеней ГТУ"')
+        else:
+            panel_3 = st.sidebar.radio('Этапы расчета ступени:', [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))])
+            num_1 = [f'Ступень №{i+1}' for i in range(int(st.session_state.number_of_steps_))]
                 
-            if panel_3 == num_1[i]:
-                st.session_state.stagessection = None
-                st.session_state.method_section = True
-                st.session_state.value_num_  = 0.0
-                st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Расчет ступени ГТУ по сечениям</ins></h1>", unsafe_allow_html=True)
+            for i in range(int(st.session_state.number_of_steps_)):
+                    
+                if panel_3 == num_1[i]:
+                    st.session_state.stagessection = None
+                    st.session_state.method_section = True
+                    st.session_state.value_num_  = 0.0
+                    st.markdown("<h1 style='text-align: center; color: #1C2833;'><ins>Расчет ступени ГТУ по сечениям</ins></h1>", unsafe_allow_html=True)
 
-                st.header(f'Ввод исходных данных ступени №{i+1}')
-                with st.form(key = 'my_form_7'): 
-                    select_4 = st.radio('Выбор закона закрутки:', ['Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡'])  
-                    if i == 0:
-                        st.session_state.data = []
+                    st.header(f'Ввод исходных данных ступени №{i+1}')
+                    with st.form(key = 'my_form_7'): 
+                        select_4 = st.radio('Выбор закона закрутки:', ['Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡', 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡'])  
+                        if i == 0:
+                            st.session_state.data = []
 
-                    if select_4 == 'Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡':
-                        param_7 = countNum(i)
-                        st.session_state.value_num_ = param_7
-                        st.session_state.method_section = 'rtgconst' 
+                        if select_4 == 'Обратный закон закрутки: 𝑟 ∙ 𝑡𝑔(𝛼1) = 𝑐𝑜𝑛𝑠𝑡':
+                            param_7 = countNum(i)
+                            st.session_state.value_num_ = param_7
+                            st.session_state.method_section = 'rtgconst' 
 
-                    if select_4 == 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡':
-                        param_7 = countNum(i)
-                        st.session_state.value_num_ = param_7
-                        st.session_state.method_section = 'C1uconst'                   
+                        if select_4 == 'Закон постоянства циркуляции: 𝐶1𝑢 ∙ 𝑟𝜑2 = 𝑐𝑜𝑛𝑠𝑡':
+                            param_7 = countNum(i)
+                            st.session_state.value_num_ = param_7
+                            st.session_state.method_section = 'C1uconst'                   
 
-                    if select_4 == 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡':
-                        param_7 = countNum(i)
-                        st.session_state.value_num_ = param_7
-                        st.session_state.method_section = 'alpha1const'                            
-                        
-                    if st.form_submit_button('Расчет'):                        
-                        stagessection = spin_laws_stage(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, 
-                        distr = st.session_state.parametergtu, stg = st.session_state.stage_dict, m = int(st.session_state.value_num_), 
-                        n = i, method = st.session_state.method_section)
-                        st.session_state.stagessection = stagessection
+                        if select_4 == 'Закон постоянства угла выхода: 𝛼1(𝑟) = 𝑐𝑜𝑛𝑠𝑡':
+                            param_7 = countNum(i)
+                            st.session_state.value_num_ = param_7
+                            st.session_state.method_section = 'alpha1const'                            
+                            
+                        if st.form_submit_button('Расчет'):                        
+                            stagessection = spin_laws_stage(fuel = st.session_state.fuel, sch = st.session_state.schemegtu, geom = st.session_state.geometrygtu, 
+                            distr = st.session_state.parametergtu, stg = st.session_state.stage_dict, m = int(st.session_state.value_num_), 
+                            n = i, method = st.session_state.method_section)
+                            st.session_state.stagessection = stagessection
 
-                        st.table(stage_section_table(st.session_state.stagessection[1]))
-                        st.pyplot(velocity_triangle_i(C_1_i = st.session_state.stagessection[2][0], W_1_i = st.session_state.stagessection[2][1], U_1_i = st.session_state.stagessection[2][2], alpha_1_i = st.session_state.stagessection[2][3], betta_1_i = st.session_state.stagessection[2][4],
-                        C_2_i = st.session_state.stagessection[2][5], W_2_i = st.session_state.stagessection[2][6], U_2_i = st.session_state.stagessection[2][7], alpha_2_i = st.session_state.stagessection[2][8], betta_2_i = st.session_state.stagessection[2][9]))
+                            st.table(stage_section_table(st.session_state.stagessection[1]))
+                            st.pyplot(velocity_triangle_i(C_1_i = st.session_state.stagessection[2][0], W_1_i = st.session_state.stagessection[2][1], U_1_i = st.session_state.stagessection[2][2], alpha_1_i = st.session_state.stagessection[2][3], betta_1_i = st.session_state.stagessection[2][4],
+                            C_2_i = st.session_state.stagessection[2][5], W_2_i = st.session_state.stagessection[2][6], U_2_i = st.session_state.stagessection[2][7], alpha_2_i = st.session_state.stagessection[2][8], betta_2_i = st.session_state.stagessection[2][9]))
 
     if panel_global == "IV. - Этап профилирование":
         st.caption('Находится в стадии разработки')
