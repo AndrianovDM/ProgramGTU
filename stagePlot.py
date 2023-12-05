@@ -174,7 +174,7 @@ def hs_plot(point0_, point1s, point1, point1_, point1w_, point2s, point2, point2
         p0_, p1s, p1, p1_, p1w_, p2s, p2, p2_, p2s_, p2w_  = point0_['P0_'], point1s['P1s'], point1['P1_sm'], point1_['P1_sm_'], point1w_['P1w_sm_'], point2s['P2s'], point2['P2_sm'], point2_['P2_sm_'], point2s_['P2s_sm_'], point2w_['P2w_sm_']
         v0_, v1s, v1, v1_, v1w_, v2s, v2, v2_, v2s_, v2w_ =  point0_['V0_'], point1s['V1s'], point1['V1_sm'], point1_['V1_sm_'], point1w_['V1w_sm_'], point2s['V2s'], point2['V2_sm'], point2_['V2_sm_'], point2s_['V2s_sm_'], point2w_['V2w_sm_']
             
-    plt.style.use('seaborn-ticks') # задание стиля окна
+    # plt.style.use('seaborn-ticks') # задание стиля окна
     fig = plt.figure(figsize = (15, 10)) # параметры окна
     ax = plt.axes()
     plt.xlim((s2s - 0.02, s1 + 0.06))
