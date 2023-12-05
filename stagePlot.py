@@ -287,7 +287,7 @@ def hs_plot(point0_, point1s, point1, point1_, point1w_, point2s, point2, point2
 
 def velocity_triangle_plot(C_1, W_1, U_1, alpha_1, betta_1, C_2, W_2, U_2, alpha_2, betta_2, i):
 
-    plt.style.use('seaborn-ticks') # задание стиля окна
+    # plt.style.use('seaborn-ticks') # задание стиля окна
     fig = plt.figure(figsize = (15, 10)) # параметры окна
     ax = plt.axes()
     plt.tick_params(axis ='both', which='major', labelsize = 15, 
@@ -368,31 +368,4 @@ def velocity_triangle_plot(C_1, W_1, U_1, alpha_1, betta_1, C_2, W_2, U_2, alpha
 
     fig.set_figwidth(15)
     fig.set_figheight(8)
-    plt.show() 
-
-def velocity_triangle_i(C_1_i, W_1_i, U_1_i, alpha_1_i, betta_1_i,
-                      C_2_i, W_2_i, U_2_i, alpha_2_i, betta_2_i):
-    fig= plt.figure()
-    ax=plt.axes() 
-    for i in range(len(C_1_i)):
-        c1_ix=[-C_1_i[i]*cos(radians(alpha_1_i[i])),0]
-        c1_iy=[-C_1_i[i]*sin(radians(alpha_1_i[i])),0]
-        c2_ix=[C_2_i[i]*cos(radians(alpha_2_i[i])),0]
-        c2_iy=[-C_2_i[i]*sin(radians(alpha_2_i[i])),0]
-        w1_ix=[-W_1_i[i]*cos(radians(betta_1_i[i])),0]
-        w1_iy=[-W_1_i[i]*sin(radians(betta_1_i[i])),0]
-        w2_ix=[ W_2_i[i]*cos(radians(betta_2_i[i])),0]
-        w2_iy=[-W_2_i[i]*sin(radians(betta_2_i[i])),0]
-        u1_ix=[-W_1_i[i]*cos(radians(betta_1_i[i]))-U_1_i[i],-W_1_i[i]*cos(radians(betta_1_i[i]))]
-        u1_iy=[-C_1_i[i]*sin(radians(alpha_1_i[i])), -W_1_i[i]*sin(radians(betta_1_i[i]))]
-        u2_ix=[W_2_i[i]*cos(radians(betta_2_i[i])),W_2_i[i]*cos(radians(betta_2_i[i]))-U_2_i[i]]
-        u2_iy=[-W_2_i[i]*sin(radians(betta_2_i[i])),-C_2_i[i]*sin(radians(alpha_2_i[i]))]
-        plt.plot (c1_ix,c1_iy,'o-r')
-        plt.plot (c2_ix,c2_iy,'o-b')
-        plt.plot (w1_ix,w1_iy,'o-r')
-        plt.plot (w2_ix,w2_iy,'o-b')
-        plt.plot (u1_ix,u1_iy,'o-r')
-        plt.plot (u2_ix,u2_iy,'o-b')
-        fig.set_figwidth(15)
-        fig.set_figheight(8)
     plt.show() 

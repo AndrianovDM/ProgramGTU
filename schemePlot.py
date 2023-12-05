@@ -5,7 +5,7 @@ from matplotlib.ticker import LinearLocator
 from scipy.interpolate import make_interp_spline
 
 def braiton_plot(point_a, point_b_ =0, point_b =0, point_c =0, point_d_=0, point_d=0):
-    plt.style.use('seaborn-ticks') # задание стиля окна
+    # plt.style.use('seaborn-ticks') # задание стиля окна
     fig = plt.figure(figsize=(15,10)) # параметры окна
     ax = plt.axes()
 

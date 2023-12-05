@@ -5,7 +5,7 @@ from matplotlib import cm
 from matplotlib.ticker import MaxNLocator
 
 def ro_plot_2D(alpha, Y, method):
-    plt.style.use('seaborn-ticks') # задание стиля окна
+    # plt.style.use('seaborn-ticks') # задание стиля окна
     fig = plt.figure(figsize=(15,10)) # параметры окна
     ax = plt.axes()
     plt.tick_params(axis='both', which='major', labelsize=15, 
@@ -61,7 +61,7 @@ def ro_plot_3D(array, method):
 
 def etta_plot_2D(C_2a, mu, val_1, val_2, val_3):
 
-    plt.style.use('seaborn-ticks') # задание стиля окна
+    # plt.style.use('seaborn-ticks') # задание стиля окна
     fig = plt.figure(figsize=(15,10)) # параметры окна
     ax = plt.axes()
     plt.xlim((0.35, 1.3))
@@ -117,7 +117,7 @@ def etta_plot_3D(array):
     plt.show()
 
 def distribution_plot(arr, method):
-    plt.style.use('seaborn-ticks') # задание стиля окна
+    # plt.style.use('seaborn-ticks') # задание стиля окна
     fig = plt.figure(figsize=(15,5)) # параметры окна
     ax = plt.axes()
     plt.tick_params(axis='both', which='major', labelsize=15, 
