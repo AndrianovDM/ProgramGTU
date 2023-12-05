@@ -66,7 +66,7 @@ def spin_laws_stage(fuel, sch, geom, distr, stg, n, m, method):
     C_2_i = [ C_2a_i[i] / (sin(radians(alpha_2_i[i]))) for i in range(m)]
     C_2a_i = [C_2_i[i] * sin(radians(alpha_2_i[i])) for i in range(m)]
     betta_2_i = [degrees(atan(C_2a_i[i] / (C_2u_i[i] + U_2_i[i]))) for i in range(m)]
-    W_2_i = [ C_2a_i[i] / (sin(radians(betta_2_i[i]))) for i in range(m)]
+    W_2_i = [C_2a_i[i] / (sin(radians(betta_2_i[i]))) for i in range(m)]
     W_2a_i = [W_2_i[i] * sin(radians(betta_2_i[i])) for i in range(m)]
     ro_k_i = [ 1 - ((C_1u_i[i] - (C_2u_i[i])) / (2 * U_1_i[i])) for i in range(m)]
     
@@ -161,7 +161,7 @@ def spin_laws_stage(fuel, sch, geom, distr, stg, n, m, method):
                          C_2_i, W_2_i, U_2_i, alpha_2_i, betta_2_i]
     
     return parametrs, param, velocity_triangle, n, 
-
+ 
 # fuel = gas(_H_2S = 0, _CO_2 = 0.06, _O_2 = 0, _CO = 0, _H_2 = 0, _CH_2 = 0,
 #         _CH_4 = 99.0, _C_2H_4 = 0, _C_2H_6 = 0.1, _C_3H_8 = 0.03,_C_4H_10 = 0.04, 
 #         temperature_C = temperature_Cels)
